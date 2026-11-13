@@ -35,6 +35,8 @@ Each feature is `SAME`, `DIFFERENT` or `UNKNOWN`.
 | possible | type SAME, no contradiction, and exactly 1 of them is SAME |
 | no_match | type SAME but nothing else agrees |
 
+When the item types differ, code ignores every other feature (the colour of a wallet isn't compared with the colour of a phone).
+
 Both `match` and `possible` can be confirmed or rejected by the owner; `no_match` can't.
 
 ## How it stays fair
@@ -68,7 +70,7 @@ See [DEMO_RESULTS.md](DEMO_RESULTS.md) for the recorded run, deployment address 
 
 ## Testing
 
-`test_contract.py` contains 28 local tests using a simulated GenLayer runtime and authored AI answers. See [VERIFICATION.md](VERIFICATION.md).
+`test_contract.py` contains 31 local tests using a simulated GenLayer runtime and authored AI answers. See [VERIFICATION.md](VERIFICATION.md).
 
 ## Boundaries
 

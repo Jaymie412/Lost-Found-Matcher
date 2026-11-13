@@ -5,7 +5,7 @@ Contract file: `contract.py`, version `lost-found-matcher-0.1`.
 ## Local checks completed
 
 - Python syntax compilation succeeded.
-- `test_contract.py`: **28 tests passed** with `python -m pytest`, against a simulated GenLayer runtime. The test runner rolls back every change when a write fails, like a real GenLayer transaction.
+- `test_contract.py`: **31 tests passed** with `python -m pytest`, against a simulated GenLayer runtime. The test runner rolls back every change when a write fails, like a real GenLayer transaction.
 - The contract uses only GenLayer SDK calls that my earlier contracts ran end to end on GenLayer Studio with the same `py-genlayer` runner (`gl.vm.run_nondet_unsafe`, `gl.vm.Return`, `gl.nondet.exec_prompt`, `gl.vm.UserError`, `gl.message.sender_address`). It makes no web requests.
 - Every storage write in `request_match` happens after the validators have agreed.
 
@@ -39,6 +39,8 @@ All AI answers in the tests are authored fixtures. They check the contract's det
 17. Pending items can't be closed or withdrawn.
 
 **Consensus and AI-output checks**
+17a. When the item types differ, code sets every other feature to UNKNOWN, so validators that compare colours or places differently still agree.
+17b. An audit reply with extra fields (such as a reason) is still read correctly.
 18. A validator reaching a different result blocks the transaction and nothing is saved.
 19. Validators quoting different words but reaching the same result still agree.
 20. A failed audit blocks the transaction.

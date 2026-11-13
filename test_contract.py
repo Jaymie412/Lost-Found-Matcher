@@ -473,6 +473,39 @@ def test_malformed_reply_is_retried(env):
     assert summ(c)["label"] == "match"
 
 
+def test_different_item_types_ignore_every_other_feature(env):
+    _, _, ns = env
+    found = "Found a black leather wallet on the number 42 bus."
+    a = feats(type=("DIFFERENT", "Samsung phone", "wallet"), colour=("DIFFERENT", "Black", "black"),
+              place=("SAME", "number 42 bus", "number 42 bus"))
+    out = ns["_check_features"](a, LOST, found)
+    assert [e["relation"] for e in out["features"]] == ["DIFFERENT", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN"]
+    assert ns["_outcome"](out) == {"label": "no_match", "reason": "item_type_not_the_same", "agree": [],
+                                   "conflicts": ["type"]}
+
+
+def test_validators_agree_on_different_types_whatever_they_say_about_colour(env):
+    sim, c, _ = env
+    sim.leader_answer = feats(type=("DIFFERENT", "phone", "wallet"), colour=("DIFFERENT", "blue case", "brown"))
+    sim.validator_answer = feats(type=("DIFFERENT", "phone", "wallet"), place=("SAME", "number 42 bus", "number 42 bus"))
+    requested(sim, c, sim.leader_answer, found=WALLET)
+    assert summ(c)["status"] == "NO_MATCH" and summ(c)["conflicts"] == ["type"]
+
+
+def test_audit_reply_with_extra_fields_is_read(env):
+    sim, c, _ = env
+    real = sim.build_gl().nondet.exec_prompt
+    ns_gl = sys.modules["genlayer"].gl
+
+    def chatty(prompt, response_format=None):
+        if prompt.startswith("Audit the proposed"):
+            return {"accept": True, "reason": "quotes check out"}
+        return real(prompt, response_format)
+    ns_gl.nondet.exec_prompt = chatty
+    requested(sim, c)
+    assert summ(c)["status"] == "PENDING"
+
+
 # ---------- demos ----------
 
 def test_demo_is_isolated(env):
